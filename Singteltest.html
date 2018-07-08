@@ -90,7 +90,7 @@
 <script>
 
 //get endpoint data from JSON
-data = '{"buttons":[4,25,25,10,10],"bars":[3,0,50,75],"limit":160}';
+data = '{"buttons":[6,25,25,10,10,5,5],"bars":[3,0,50,75],"limit":160}';
 var obj = JSON.parse(data);
 
 var buttonNum = obj.buttons[0];
@@ -159,6 +159,8 @@ function minus(inInt) {
       elem.style.backgroundColor= "#4CAF50";
 	  elem.style.width = 0 + '%'; 
 	  elem.innerHTML = 0  + '%';
+	  width =0;
+	  widthArr[lastChar]= width;
   } else {
       width=width-num; 
 	  widthArr[lastChar]= width;
