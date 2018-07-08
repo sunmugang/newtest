@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<style>
+#myProgress {
+  width: 100%;
+  background-color: #ddd;
+  line-height: 10px;
+}
+#myBar0 {
+  width: 0%;
+  height: 30px;
+  background-color: #4CAF50;
+  text-align: center;
+  line-height: 30px;
+  color: white;
+}
+#myBar1 {
+  width: 50%;
+  height: 30px;
+  background-color: #4CAF50;
+  text-align: center;
+  line-height: 30px;
+  color: white;
+}
+
+#myBar2 {
+  width: 75%;
+  height: 30px;
+  background-color: #4CAF50;
+  text-align: center;
+  line-height: 30px;
+  color: white;
+}
+
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {background-color: #ddd;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
+</style>
+<body>
+
+<h1>JavaScript Progress Bar</h1>
+
+<br>
+<div id="myProgress">
+<div id="myBar0">0%</div>
+</div>
+<br>
+<div id="myProgress">
+<div id="myBar1">50%</div>
+</div>
+<br>
+<div id="myProgress">
+<div id="myBar2">75%</div>
+</div>
+
+<br>
+<p id="barlist"></p>
+
+<script>
+
+//get endpoint data from JSON
+data = '{"buttons":[4,25,25,10,10],"bars":[3,0,50,75],"limit":160}';
+var obj = JSON.parse(data);
+
+var buttonNum = obj.buttons[0];
+var numArr = new Array();
+var buttonAction = new Array();
+for (var i = 1; i <= buttonNum; i++) {
+ numArr.push(obj.buttons[i]);
+}
+
+for (var i = 0; i < buttonNum; i++) {
+ if ( i % 2 == 0 ){
+	buttonAction.push("plus("+numArr[i]+")");
+}else{
+    buttonAction.push("minus("+numArr[i]+")");
+}
+}
+
+var barNum = obj.bars[0];
+
+var width = 0;
+var widthArr = new Array();
+for (var i = 1; i <= barNum; i++) {
+ widthArr.push(obj.bars[i]);
+};
+
+var limit = obj.limit;
+
+function myaction() {
+for (var i = 0; i < buttonNum; i++) {
+ document.getElementById( "button"+i ).setAttribute( "onClick", "javascript: "+buttonAction[i]+";" );
+}
+} 
+//for increase button 
+function plus(inInt) {
+  //alert("inInt:"+inInt);
+  num = inInt;
+  barName = document.getElementById("mySelect").value; 
+  var stringLength = barName.length; // this will be 16
+  var lastChar = barName.charAt(stringLength - 1);
+  width = widthArr[lastChar]
+
+  var elem = document.getElementById(barName);   
+      width=width+num; 
+	  widthArr[lastChar]= width;
+	  if (width >=limit) {
+	    elem.style.width = 100 + '%'; 
+		elem.style.backgroundColor= "red";
+	  } else {
+	    elem.style.backgroundColor= "#4CAF50";
+        elem.style.width = width + '%'; 
+	  }
+      elem.innerHTML = width * 1  + '%';
+}
+
+//for decrease button 
+function minus(inInt) {
+  num = inInt;
+  //alert("inInt:"+inInt);
+  barName = document.getElementById("mySelect").value; 
+  var stringLength = barName.length; // this will be 16
+  var lastChar = barName.charAt(stringLength - 1);
+  width = widthArr[lastChar]
+  
+  var elem = document.getElementById(barName);   
+  if (width <=num) {
+      elem.style.backgroundColor= "#4CAF50";
+	  elem.style.width = 0 + '%'; 
+	  elem.innerHTML = 0  + '%';
+  } else {
+      width=width-num; 
+	  widthArr[lastChar]= width;
+      if (width >=limit) {
+	    elem.style.backgroundColor= "red";
+	    elem.style.width = 100 + '%'; 
+	  } else {
+	    elem.style.backgroundColor= "#4CAF50";
+        elem.style.width = width + '%'; 
+	  } 
+      elem.innerHTML = width * 1  + '%';
+  }
+}
+
+
+//for dropdown list
+var selectDiv = document.getElementById("barlist");
+//Create and append select list
+var selectList = document.createElement("select");
+selectList.id = "mySelect";
+selectDiv.appendChild(selectList);
+
+//Create and append the options
+for (var i = 0; i < barNum; i++) {
+    var option = document.createElement("option");
+    option.value = "myBar"+i;
+    option.text = "myBar"+i;
+    selectList.appendChild(option);
+}
+
+//Create button
+var buttonDiv = document.getElementById("buttonnames");
+var valueStr = "";
+for (var i = 0; i < buttonNum; i++) {
+    if ( i % 2 == 0 ){
+		valueStr = "+"+numArr[i];
+	}else{
+	valueStr = "-"+numArr[i];}	
+	var buttonNew= "btn"+i;
+    var buttonNew = document.createElement("BUTTON");
+	buttonNew.id = "button"+i;
+    var txt = document.createTextNode(valueStr);
+	buttonNew.addEventListener('click', function() {
+    myaction();});
+    buttonNew.appendChild(txt);	
+	buttonNew.margin  = "10px";
+    document.body.appendChild(buttonNew);
+	/*
+    btn = document.createElement("BUTTON");
+	valueStr = "+"+numArr[i];
+	alert(valueStr)
+	btn.id = "button"+i;
+	btn.onclick = function(){plus(valueStr);};
+	btn.innerText = valueStr;
+	btn.value = valueStr;
+	btn.style.height = "24px";
+	btn.style.wight = "48px";
+	buttonDiv.appendChild(btn);
+	*/
+}
+
+var barDiv = document.getElementById("progressnames");
+var valueStr = "";
+for (var i = 0; i < barNum; i++) {
+    pro = document.createElement("PROGRESS");
+	barDiv.appendChild(pro);
+}
+
+
+</script>
+</body>
+</html>
